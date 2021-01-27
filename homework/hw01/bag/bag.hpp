@@ -24,7 +24,12 @@ public:
 
   bool contains(const T& entry) const;
 
+private: 
+
+  int item[10] = {1,0,0,0,0,0,0,0,0,0 };
+
 };
+
 
 #include "bag.tpp"
 
