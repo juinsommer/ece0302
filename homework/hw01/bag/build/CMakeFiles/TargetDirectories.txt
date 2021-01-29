@@ -1,0 +1,5 @@
+/home/juin/ece302/starter-code-ece0302/homework/hw01/bag/build/CMakeFiles/rebuild_cache.dir
+/home/juin/ece302/starter-code-ece0302/homework/hw01/bag/build/CMakeFiles/edit_cache.dir
+/home/juin/ece302/starter-code-ece0302/homework/hw01/bag/build/CMakeFiles/test.dir
+/home/juin/ece302/starter-code-ece0302/homework/hw01/bag/build/CMakeFiles/submission.dir
+/home/juin/ece302/starter-code-ece0302/homework/hw01/bag/build/CMakeFiles/bag-tests.dir

@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/juin/ece302/starter-code-ece0302/homework/hw01/bag/build",
+  "command": "/usr/bin/c++    -g   -std=gnu++11 -o CMakeFiles/bag-tests.dir/bag_tests.cpp.o -c /home/juin/ece302/starter-code-ece0302/homework/hw01/bag/bag_tests.cpp",
+  "file": "/home/juin/ece302/starter-code-ece0302/homework/hw01/bag/bag_tests.cpp"
+}
+]

@@ -2,6 +2,7 @@
 #define STUDENT_BAG_HPP
 
 #include <cstdlib>
+#include <vector>
 
 template<typename T> class Bag{
 public:
@@ -24,9 +25,11 @@ public:
 
   bool contains(const T& entry) const;
 
+  std::vector<T> getVector() const { return items; }
+
 private: 
 
-  int item[10] = {1,0,0,0,0,0,0,0,0,0 };
+  std::vector<T> items;
 
 };
 
