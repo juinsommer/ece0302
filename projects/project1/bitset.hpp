@@ -43,7 +43,7 @@ public:
 
 private:
 
-  // TODO
+static intmax_t N;
 };
 
 #endif
