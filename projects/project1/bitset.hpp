@@ -42,14 +42,14 @@ public:
   // TODO COMMENT
   std::string asString() const;
 
-  u_int8_t* getPtr();
-
+  u_int8_t *getPtr() { return bitset; }
+  
 private:
 
   u_int8_t *bitset = NULL;
   int length = 0;
   bool validation = true;
-  std::string bits = "";
+  bool checkBit = true;
 
 };
 #endif

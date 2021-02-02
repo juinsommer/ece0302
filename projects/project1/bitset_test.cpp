@@ -4,14 +4,12 @@
 
 #include "bitset.hpp"
 
-// THIS IS JUST AN EXAMPLE
-// There should be at least one test per Bitset method
-
 TEST_CASE( "Test bitset construction", "[bitset]" ) {
 
     Bitset b;
     REQUIRE(b.size() == 8);
     REQUIRE(b.good() == true);
+    REQUIRE(b.asString() == "00000000");
 }
 
 TEST_CASE( "Test construction of bitset size N", "[bitset]") {
@@ -23,6 +21,10 @@ TEST_CASE( "Test construction of bitset with string", "[bitset]") {
     Bitset b("10000000");
     REQUIRE(b.asString() == "10000000");
     REQUIRE(b.good() == true);
+
+    Bitset b2("31002001");
+    REQUIRE(b2.good() == false);
+
 }
 
 TEST_CASE( "test set function", "[bitset]") {

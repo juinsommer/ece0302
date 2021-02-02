@@ -2,12 +2,10 @@
 #include <iostream>
 
 int main() {
-    Bitset b;
-    b.set(2);
-    b.toggle(2);
+    Bitset b("300333333");
+    std::cout << b.asString();
 
-    for(int i = 0; i < 8; i++)
-        std::cout << (int)b.getPtr()[i] << " ";
-
+    for(int i = 0; i < 15; i++)
+       // std::cout << (int)b.getPtr()[i];
     return 0;  
 }

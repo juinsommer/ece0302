@@ -15,15 +15,19 @@ Bitset::Bitset(intmax_t size) {
 
 Bitset::Bitset(const std::string & value) {
 
-    bits = value;
-    bitset = (u_int8_t*)malloc(length * sizeof(u_int8_t));
+    length = value.length();
+    bitset = new u_int8_t [size()];
 
-    for(int i = 0; i < value.length(); i++) {
-
-        if(value[i] != '0' || value[i] != '1')
+    for(int i = 0; i < size(); i++) {
+        if(value[i] == '0')
+            bitset[i] = 0;
+        else if(value[i] == '1')
+            bitset[i] = 1;
+        else {
+            
+            bitset[i] = 0;
             validation = false;
-
-        *(bitset + i) = value[i];
+        }
     }
 }
 
@@ -46,15 +50,27 @@ void Bitset::reset(intmax_t index) {
 void Bitset::toggle(intmax_t index) {
     validation = (index <= 0 || index -1 > length) ? false : true;
     int val;
+    val = bitset[index - 1];
     bitset[index - 1] = !val;
 }
 
 bool Bitset::test(intmax_t index) { 
 
-   validation = (bitset[index -1] != 1 ) ? false : true;
-   return validation;
+   validation = (index <= 0 || index -1 > length) ? false : true;
+   checkBit = (bitset[index -1] != 1 ) ? false : true;
+   return checkBit;
  }
 
-std::string Bitset::asString() const { return bits; }
+std::string Bitset::asString() const {
 
-u_int8_t* Bitset::getPtr() { return bitset; }
+    std::string tempStr = "";
+    for(int i = 0; i < size(); i++) {
+        if(bitset[i] == 0)
+            tempStr.append("0");
+        else if(bitset[i] == 1)
+            tempStr.append("1");
+        else
+            tempStr.append(" ");
+    }
+    return tempStr;
+}
