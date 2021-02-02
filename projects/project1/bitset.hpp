@@ -1,8 +1,9 @@
 #ifndef BITSET_HPP
 #define BITSET_HPP
+
 #include <string>
 
-class Bitset{
+class Bitset {
 public:
 
   // TODO COMMENT
@@ -41,9 +42,14 @@ public:
   // TODO COMMENT
   std::string asString() const;
 
+  u_int8_t* getPtr();
+
 private:
 
-static intmax_t N;
-};
+  u_int8_t *bitset = NULL;
+  int length = 0;
+  bool validation = true;
+  std::string bits = "";
 
+};
 #endif
