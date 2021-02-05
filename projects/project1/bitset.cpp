@@ -41,7 +41,7 @@ Bitset::Bitset(const std::string & value) {
 
         else {
             //case for input other than 1 or 0
-            bitset[i] = NULL;
+            bitset[i] = 0;
             validation = false;
         }
     }
@@ -95,7 +95,7 @@ std::string Bitset::asString() const {
 
         else if(bitset[i] == 1)
             tempStr.append("1");
-            
+
         else
             tempStr.append(" "); //case for invalid input 
     }
