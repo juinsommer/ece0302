@@ -42,7 +42,9 @@ public:
 
 private:
 
-  // TODO
+  T* bagPtr = nullptr; 
+  int maxOut = 50; //to store max number of items to store in bag 
+  int numItems = 0;
 };
 
 #include "dynamic_bag.tpp"
