@@ -42,7 +42,7 @@ public:
 
 private:
 
-  T* bagPtr = nullptr; 
+  T* bagPtr = nullptr; //ptr to generic type to dynamically allocate memory
   int maxOut = 50; //to store max number of items to store in bag 
   int numItems = 0;
 };
