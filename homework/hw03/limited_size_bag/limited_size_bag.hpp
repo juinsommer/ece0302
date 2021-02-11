@@ -42,7 +42,9 @@ public:
 
 private:
 
-  // TODO
+  static const int MAXSIZE = 10; //stores fixed size to initialize array
+  T fixedBag[MAXSIZE]; //array of generic type T to store items
+  int numItems; //to track the number of items
 };
 
 #include "limited_size_bag.tpp"
