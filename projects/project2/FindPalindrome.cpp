@@ -27,7 +27,7 @@ void FindPalindrome::recursiveFindPalindromes(vector<string>
         candidateStringVector, vector<string> currentStringVector)
 {
 	// TODO need to implement this recursive function!
-	return;
+
 }
 
 // private function to determine if a string is a palindrome (given, you
@@ -48,21 +48,19 @@ bool FindPalindrome::isPalindrome(string currentString) const
 }
 
 //------------------- PUBLIC CLASS METHODS -------------------------------------
-
-FindPalindrome::FindPalindrome()
+/*FindPalindrome::FindPalindrome()
 {
-	// TODO need to implement this...
+	
 }
 
 FindPalindrome::~FindPalindrome()
 {
-	// TODO need to implement this...
-}
+	
+} */
 
 int FindPalindrome::number() const
 {
-	// TODO need to implement this...
-	return 10;
+	return numPalindromes;
 }
 
 void FindPalindrome::clear()
@@ -85,14 +83,53 @@ bool FindPalindrome::cutTest2(const vector<string> & stringVector1,
 
 bool FindPalindrome::add(const string & value)
 {
-	// TODO need to implement this...
-	return false;
+	bool validStr; //to store validity of string "value"
+	string tempStr = value;
+
+	//iterate over string to check if each char is valid
+	for(const char c : value) 
+		//isalpha() checks if char is any letter
+		validStr = (!isalpha(c)) ? false : true;
+			
+	convertToLowerCase(tempStr); //convert to lowercase to compare
+	validStr = (tempStr.compare(objStr) == 0) ? false : true;
+	
+	if(validStr) { //if the string is valid, then append
+		objStr.append(value);
+		return (isPalindrome(objStr)); //check if palindrome 
+	}
+
+	else 
+		return false;
 }
 
 bool FindPalindrome::add(const vector<string> & stringVector)
 {
-	// TODO need to implement this...
-	return false;
+	bool validStr = true; //to store validity of string "value"
+	vector<string> tempVect(stringVector);
+
+	for(size_t i = 0; i < stringVector.size(); i++) {
+		string tempStr = stringVector[i];
+		for(const char c : tempStr)
+			//isalpha() checks if char is any letter
+			if(!isalpha(c))
+				validStr = false;
+
+		for(auto i : tempStr) {
+			convertToLowerCase(tempStr); //convert to lowercase to compare
+			if(tempStr.compare(objStr) == 0)
+				validStr = false;
+		}
+	}
+
+	if(validStr) {
+		for(auto i : stringVector)
+			objStr.append(i);
+
+		return (isPalindrome(objStr));
+	}
+	else
+		return false;
 }
 
 vector< vector<string> > FindPalindrome::toVector() const

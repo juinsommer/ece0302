@@ -1,11 +1,11 @@
 #include <iostream>
-#include "FindPalindrome.cpp"
+#include "FindPalindrome.hpp"
 
 using namespace std;
 
 int main()
 {
-	FindPalindrome f;
+    FindPalindrome f;
 	string newString("a");
 	cout << "\n******* Project 1 Main *********\n\n";
 	for (int i=0; i<3; i++) {
@@ -26,7 +26,13 @@ int main()
 		cout << endl;
 	}
 	cout << endl;
-	cout << "\n******* Project 1 Main *********\n\n";
+	cout << "\n******* Project 1 Main *********\n\n"; 
+
+/*	FindPalindrome b;
+	vector<string> strVect = {"Was", "it", "a", "car", "or", "cat", "I", "saw" };
+	b.add(strVect);
+	cout << b.getStr() << endl; */
 	return 0;
+
 }
 

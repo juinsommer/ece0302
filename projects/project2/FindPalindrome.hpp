@@ -7,12 +7,11 @@
 class FindPalindrome{
 
 private:
-	// private stuff that you define and implement goes here...
-	
-	// ...
-	
-	// private stuff that you are given or is specified in the project
-	// description...
+
+	std::string objStr = ""; //to store string added to object	
+	int numPalindromes = 0;
+
+
 	/** recursive findPalindrome internal method (you write this 
 	    recursive function per the project description). You may not
 	    change the signature. The method must call itself recursively.
@@ -30,10 +29,10 @@ private:
 	
 public:
 	/** Constructor for the FindPalindrome object. */
-	FindPalindrome();
+	FindPalindrome(){}
 
 	/** Destroys object and frees any memory allocated by object. */
-	~FindPalindrome();
+	~FindPalindrome(){}
 
 	/** Returns the current number of sentence palindromes in the
 	    FindPalindrome instance.
@@ -99,6 +98,8 @@ public:
 	    all current strings added to the FindPalindrome instance.
 	@return  A vector containing all the items in the linked list in order. */
 	std::vector< std::vector<std::string> > toVector() const;
+
+	std::string getStr() { return objStr; }
 
 };
 
