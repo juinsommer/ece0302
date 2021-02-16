@@ -42,8 +42,9 @@ public:
   void setEntry(std::size_t position, const T& newValue);
 
 private:
-
-  // TODO
+  std::size_t maxSize = 25; //max size of array to be changed if full
+  T* list = nullptr; //ptr to point to array of generic type T
+  int numItems; //store number of items in list
   
 };
 
