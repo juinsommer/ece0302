@@ -5,7 +5,12 @@ using namespace std;
 
 int main()
 {
-    FindPalindrome f;
+
+	FindPalindrome b;
+	std::vector<std::string> str = {"Was", "it", "a", "car", "or", "a", "cat", "I", "saw" };
+	b.add(str);
+
+    /*FindPalindrome f;
 	string newString("a");
 	cout << "\n******* Project 1 Main *********\n\n";
 	for (int i=0; i<3; i++) {

@@ -7,9 +7,11 @@
 class FindPalindrome{
 
 private:
+	int numPalindromes; //tracks number of sentence palindromes possible
+	int numWords; //tracks number of words added
+	std::vector<std::string> palindromeVect;
+	std::vector<std::string> currentVect = {""};
 
-	std::string objStr = ""; //to store string added to object	
-	int numPalindromes = 0;
 
 
 	/** recursive findPalindrome internal method (you write this 
@@ -29,10 +31,10 @@ private:
 	
 public:
 	/** Constructor for the FindPalindrome object. */
-	FindPalindrome(){}
+	FindPalindrome();
 
 	/** Destroys object and frees any memory allocated by object. */
-	~FindPalindrome(){}
+	~FindPalindrome();
 
 	/** Returns the current number of sentence palindromes in the
 	    FindPalindrome instance.
@@ -98,8 +100,6 @@ public:
 	    all current strings added to the FindPalindrome instance.
 	@return  A vector containing all the items in the linked list in order. */
 	std::vector< std::vector<std::string> > toVector() const;
-
-	std::string getStr() { return objStr; }
 
 };
 
