@@ -1,26 +1,22 @@
 #include <iostream>
-#include "FindPalindrome.hpp"
+#include "FindPalindrome.cpp"
 
 using namespace std;
 
 int main()
 {
-
-	FindPalindrome b;
-	std::vector<std::string> str = {"Was", "it", "a", "car", "or", "a", "cat", "I", "saw" };
-	b.add(str);
-
-    /*FindPalindrome f;
-	string newString("a");
+    FindPalindrome f, f2;
+	
 	cout << "\n******* Project 1 Main *********\n\n";
-	for (int i=0; i<3; i++) {
-		if(f.add(newString)) {
-			cout << "Added the string :" << newString << endl;
-		} else {
-			cout << "ERROR: for some reason unable to add the string: << newString " << endl;
-		}
-		newString += "a";
-	}
+
+	f2.add("a");
+	f2.add("aa");
+	f2.add("aaa");
+
+	vector<string> strVect = {"Never", "Odd", "or", "Even"};
+	f.add(strVect);
+
+	
 	cout << "\nNumber of sentence palindromes are:  " << f.number() << endl;
 	cout << "\nThe sentence palindromes are:" << endl;
 	vector<vector<string>> vectorList = f.toVector();
@@ -33,10 +29,18 @@ int main()
 	cout << endl;
 	cout << "\n******* Project 1 Main *********\n\n"; 
 
-/*	FindPalindrome b;
-	vector<string> strVect = {"Was", "it", "a", "car", "or", "cat", "I", "saw" };
-	b.add(strVect);
-	cout << b.getStr() << endl; */
+	cout << "\nNumber of sentence palindromes are:  " << f2.number() << endl;
+	cout << "\nThe sentence palindromes are:" << endl;
+	vector<vector<string>> vectorList2 = f2.toVector();
+	for (int i=0; i<vectorList2.size(); i++) {
+		for (int j=0; j<vectorList2[i].size(); j++) {
+			cout << vectorList2[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+	cout << "\n******* Project 1 Main *********\n\n";
+
 	return 0;
 
 }

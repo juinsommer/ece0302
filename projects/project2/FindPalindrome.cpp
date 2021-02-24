@@ -25,32 +25,33 @@ static void convertToLowerCase(string & value)
 void FindPalindrome::recursiveFindPalindromes(vector<string>
         candidateStringVector, vector<string> currentStringVector)
 {
-	std::string tempCandStr = "";
-
+	//base case if currentStringVector is empty
 	if(currentStringVector.empty()) {
 
-		for(auto i : candidateStringVector)
+		std::string tempCandStr;
+		//append each string from vector into one string
+		for(auto i : candidateStringVector) 
 			tempCandStr.append(i);
-
-		if(isPalindrome(tempCandStr)) {
-			for(auto i : candidateStringVector)
-				palindromeVect.push_back(i);
-		}	
+		
+		if(isPalindrome(tempCandStr)) //if it is a palindrome add string to vector
+			palindromeVect.push_back(candidateStringVector);
 	}
 	
 	else {
+		//interate over the size of currentStringVector to get every combination of strings
 		for(std::size_t i = 0; i < currentStringVector.size(); i++) {
 			vector<string> tempCandidateVect(candidateStringVector);
 			vector<string> tempCurrentVect(currentStringVector);
-
-			tempCurrentVect.erase(tempCurrentVect.begin() + 1);
+			
+			//remove one element each iteration in ascending order
+			tempCurrentVect.erase(tempCurrentVect.begin() + i);
+			//push back the ith element of currentString vector to tempCandidate
 			tempCandidateVect.push_back(currentStringVector[i]);
-
+			//if cutTest2 is not passed, break from this branch
 			if(!cutTest2(tempCandidateVect, tempCurrentVect))
 				return;
-			++numPalindromes;
 			recursiveFindPalindromes(tempCandidateVect, tempCurrentVect);
-		}	
+		}
 	}
 }
 
@@ -72,31 +73,20 @@ bool FindPalindrome::isPalindrome(string currentString) const
 }
 
 //------------------- PUBLIC CLASS METHODS -------------------------------------
-FindPalindrome::FindPalindrome()
-{
-	numPalindromes = 0;
-	numWords = 0;
-}
+FindPalindrome::FindPalindrome() {}
 
-FindPalindrome::~FindPalindrome()
-{
-	
-}
+FindPalindrome::~FindPalindrome() { clear(); }
 
-int FindPalindrome::number() const
-{
-	return numPalindromes;
-}
+//returns number of palindromes in vector
+int FindPalindrome::number() const { return palindromeVect.size(); } 
 
-void FindPalindrome::clear()
-{
-	// TODO need to implement this...
-}
+//clears vector storing all sentence palindromes 
+void FindPalindrome::clear() { palindromeVect.clear();}
 
-//checks if sentence palindrome is possible or not give that it satisfies property#1
+//checks if sentence palindrome is possible or not given that it satisfies property#1
 bool FindPalindrome::cutTest1(const vector<string> & stringVector)
 {
-	std::string tempStr = "";
+	std::string tempStr;
 
 	//append each string in vector to tempStr
 	for(auto i : stringVector)
@@ -107,8 +97,8 @@ bool FindPalindrome::cutTest1(const vector<string> & stringVector)
 	int letters[26] = {0}; //array to store frequency of any character in alphabet
 	int middle = (tempStr.size())/2; //find middle character at middle of sentence
 	int i = 0, j; //counters for while loop
-	bool valid; //bool to return whether palindrome is possible or not
 	
+	convertToLowerCase(tempStr);
 	//iterate through the string to count frequency each character appears in string
 	while(tempStr[i] != '\0') {
 		//if contents are characters a - z
@@ -118,31 +108,34 @@ bool FindPalindrome::cutTest1(const vector<string> & stringVector)
 		}
 		++i;
 	}
-
 	//if the number of characters in sentence is even, all characters must appear 
 	//an even amount of times
 	if(tempStr.length() % 2 == 0) {
 		//check if the frequency of characters is odd
-		for(auto i : letters)
-			valid = (letters[i] % 2 != 0) ? false : true;			
+		for(std::size_t i = 0; i < 26; i++) {
+			if(letters[i] % 2 != 0)
+				return false;	
+		}	
 	}
 	//if the number of characters in sentence is odd then each character must appear
 	//an even amount of times except for middle character unless they are the same
 	//as middle character
 	else {
-		//iterate over alphabet
-		for(auto i : letters) 
+		for(std::size_t i = 0; i < 26; i++) {
 			//if frequency of char is odd and not middle char
-			valid = (letters[i] % 2 != 0 && i != (tempStr[middle] - 'a')) ? false : true;
+			if(letters[i] % 2 != 0 && i != (tempStr[middle] - 'a'))
+				return false;
+		}
 	} //end else
 
-	return valid;
+	return true;
 }
 
+//checks if palindrome is possible or not given that it satifies property 2
 bool FindPalindrome::cutTest2(const vector<string> & stringVector1,
                               const vector<string> & stringVector2)
 {
-	std::string tempStr1 = "", tempStr2 = "", smaller = "", larger = "";
+	std::string tempStr1, tempStr2, smaller, larger;
 
 	//append strings in both vectors to two separate strings
 	for(auto i : stringVector1)
@@ -167,6 +160,7 @@ bool FindPalindrome::cutTest2(const vector<string> & stringVector1,
 	int freq1[26] = {0}, freq2[26] = {0}, count1 = 0, count2 = 0, j, k;
 	//determine the frequency of each character in smaller string
 	while(smaller[count1] != '\0') {
+
 		if(smaller[count1] >= 'a' && smaller[count1] <= 'z') {
 			j = smaller[count1] - 'a'; 
 			++freq1[j];
@@ -186,6 +180,8 @@ bool FindPalindrome::cutTest2(const vector<string> & stringVector1,
 	for(std::size_t i = 0; i < 26; i++) {
 		if(freq2[i] < freq1[i])
 			return false;
+		else
+			return true;
 	}
 
 	return true;
@@ -193,7 +189,8 @@ bool FindPalindrome::cutTest2(const vector<string> & stringVector1,
 
 bool FindPalindrome::add(const string & value)
 {
-	std::string tempStr = value, tempSentence = "";
+	std::string tempStr = value;
+	std::vector<std::string> tempCurrentVect(currentVect);
 
 	//iterate over string to check if each char is valid
 	for(const char c : tempStr) 
@@ -201,56 +198,59 @@ bool FindPalindrome::add(const string & value)
 		if(!std::isalpha(c))
 			return false;
 			
-	convertToLowerCase(tempStr); //convert to lowercase to compare
-	for(auto i : currentVect) {
+	convertToLowerCase(tempStr);
+	//check if there are duplicates
+	for(auto i : tempCurrentVect) {
+		convertToLowerCase(i);
 		if(tempStr.compare(i) == 0)
 			return false;
-		tempSentence.append(i);
 	}
-	tempSentence.append(tempStr);
+	currentVect.push_back(value); //push back to private member variable 
 
-	if(isPalindrome(tempSentence)) { //if the string is valid, then append
-		currentVect.push_back(value);
-		return true;
-	}
-
-	else 
-		return false;
+	std::vector<std::string> tempCandVect; //empty temp vector 
+	clear();
+	recursiveFindPalindromes(tempCandVect, currentVect);
+	return true;
 }
 
 bool FindPalindrome::add(const vector<string> & stringVector)
 {
 	std::vector<string> tempVect(stringVector); //copy into a temp vector
-	std::string tempStr = ""; //temp to store sentence in string vector
+	std::string tempStr; //temp to store sentence in string vector
 
-	//iterate over vector of strings to check each string
-	for(std::size_t i = 0; i < stringVector.size(); i++) {
-
-		convertToLowerCase(tempVect[i]); //convert to lowercase to compare
-		if(tempVect[i] == currentVect[i]) //if there is a duplicate word
-			return false;
-
-		tempStr.append(tempVect[i]);
-		for(const char c : tempStr) { //checks for forbidden characters
+	//iterates over copy of stringVector
+	for(auto i : tempVect) {
+		convertToLowerCase(i); //convert to lowercase to compare
+		for(auto j : currentVect) {
+			convertToLowerCase(j);
+			if(i == j) //if there are duplicates return false
+				return false;
+		}
+		tempStr.append(i); //append each string in vector
+		//checks if there are any illegal characters
+		for(const char c : tempStr) {
 			if(!std::isalpha(c))
 				return false;
 		}
 	}
-		if(isPalindrome(tempStr)) { //if sentence is a palindrome 
-			for(auto i : stringVector) // then add sentence to currentVect
-				currentVect.push_back(i);
-				
-			recursiveFindPalindromes(tempVect, currentVect);
-			std::cout << numPalindromes << std::endl;
-			return true; 
-		}
-		return false;
-}
+	//add each string to private member variable
+	for(auto i : stringVector)
+		currentVect.push_back(i);
 
+	std::vector<std::string> tempCandVect; //empty temp vector
+
+	if(cutTest1(currentVect)) { //if stringVector passes cutTest1
+		clear();
+		recursiveFindPalindromes(tempCandVect, currentVect);	
+		return true; 
+	}
+	return false;
+}
+//returns vector of vectors containing all sentence palindromes
 vector< vector<string> > FindPalindrome::toVector() const
 {
-	// TODO need to implement this...
-	vector<vector<string>> returnThingie;
-	return returnThingie;
+	vector<vector<string>> tempVector(palindromeVect);
+
+	return tempVector;
 }
 

@@ -7,12 +7,8 @@
 class FindPalindrome{
 
 private:
-	int numPalindromes; //tracks number of sentence palindromes possible
-	int numWords; //tracks number of words added
-	std::vector<std::string> palindromeVect;
-	std::vector<std::string> currentVect = {""};
-
-
+	std::vector< std::vector<std::string> > palindromeVect;
+	std::vector<std::string> currentVect;
 
 	/** recursive findPalindrome internal method (you write this 
 	    recursive function per the project description). You may not
