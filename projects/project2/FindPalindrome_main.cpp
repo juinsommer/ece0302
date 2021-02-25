@@ -1,5 +1,5 @@
 #include <iostream>
-#include "FindPalindrome.cpp"
+#include "FindPalindrome.hpp"
 
 using namespace std;
 
@@ -9,12 +9,16 @@ int main()
 	
 	cout << "\n******* Project 1 Main *********\n\n";
 
+	f2.add("murder");
+	f2.add("jar");
 	f2.add("a");
-	f2.add("aa");
-	f2.add("aaa");
+	f2.add("red");
+	f2.add("for"); 
+	f2.add("of");
+	f2.add("rum");
 
-	vector<string> strVect = {"Never", "Odd", "or", "Even"};
-	f.add(strVect);
+	vector<string> str = {"Murder", "for", "a", "jar", "of", "red", "rum"};
+	f.add(str);
 
 	
 	cout << "\nNumber of sentence palindromes are:  " << f.number() << endl;
@@ -37,7 +41,7 @@ int main()
 			cout << vectorList2[i][j] << " ";
 		}
 		cout << endl;
-	}
+	} 
 	cout << endl;
 	cout << "\n******* Project 1 Main *********\n\n";
 

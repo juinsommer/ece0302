@@ -25,34 +25,34 @@ static void convertToLowerCase(string & value)
 void FindPalindrome::recursiveFindPalindromes(vector<string>
         candidateStringVector, vector<string> currentStringVector)
 {
+	std::string tempCandStr;
 	//base case if currentStringVector is empty
 	if(currentStringVector.empty()) {
-
-		std::string tempCandStr;
+		
 		//append each string from vector into one string
 		for(auto i : candidateStringVector) 
 			tempCandStr.append(i);
 		
 		if(isPalindrome(tempCandStr)) //if it is a palindrome add string to vector
 			palindromeVect.push_back(candidateStringVector);
-	}
+	} //end if
 	
 	else {
 		//interate over the size of currentStringVector to get every combination of strings
 		for(std::size_t i = 0; i < currentStringVector.size(); i++) {
 			vector<string> tempCandidateVect(candidateStringVector);
 			vector<string> tempCurrentVect(currentStringVector);
-			
+
+			if(!cutTest2(tempCandidateVect, tempCurrentVect))
+				return;
 			//remove one element each iteration in ascending order
 			tempCurrentVect.erase(tempCurrentVect.begin() + i);
 			//push back the ith element of currentString vector to tempCandidate
 			tempCandidateVect.push_back(currentStringVector[i]);
 			//if cutTest2 is not passed, break from this branch
-			if(!cutTest2(tempCandidateVect, tempCurrentVect))
-				return;
 			recursiveFindPalindromes(tempCandidateVect, tempCurrentVect);
-		}
-	}
+		} //end for loop
+	} //end else
 }
 
 // private function to determine if a string is a palindrome (given, you
@@ -75,13 +75,13 @@ bool FindPalindrome::isPalindrome(string currentString) const
 //------------------- PUBLIC CLASS METHODS -------------------------------------
 FindPalindrome::FindPalindrome() {}
 
-FindPalindrome::~FindPalindrome() { clear(); }
+FindPalindrome::~FindPalindrome() {}
 
 //returns number of palindromes in vector
 int FindPalindrome::number() const { return palindromeVect.size(); } 
 
 //clears vector storing all sentence palindromes 
-void FindPalindrome::clear() { palindromeVect.clear();}
+void FindPalindrome::clear() { palindromeVect.clear(); currentVect.clear();}
 
 //checks if sentence palindrome is possible or not given that it satisfies property#1
 bool FindPalindrome::cutTest1(const vector<string> & stringVector)
@@ -112,11 +112,12 @@ bool FindPalindrome::cutTest1(const vector<string> & stringVector)
 	//an even amount of times
 	if(tempStr.length() % 2 == 0) {
 		//check if the frequency of characters is odd
-		for(std::size_t i = 0; i < 26; i++) {
-			if(letters[i] % 2 != 0)
-				return false;	
-		}	
-	}
+		for(auto i : letters) {
+			if(i % 2 != 0)
+				return false;
+		}
+	}	
+	
 	//if the number of characters in sentence is odd then each character must appear
 	//an even amount of times except for middle character unless they are the same
 	//as middle character
@@ -175,29 +176,30 @@ bool FindPalindrome::cutTest2(const vector<string> & stringVector1,
 		}
 		++count2;
 	}
+
 	//if the frequency of each character in the larger string is less than
 	//the frequency of the smaller string then return false
 	for(std::size_t i = 0; i < 26; i++) {
 		if(freq2[i] < freq1[i])
 			return false;
-		else
-			return true;
 	}
-
+	
 	return true;
 }
 
+//adds a string to the instance if there are no illegal characers or
+//string isn't a duplicate of a string already added to instance
 bool FindPalindrome::add(const string & value)
 {
 	std::string tempStr = value;
-	std::vector<std::string> tempCurrentVect(currentVect);
+	std::vector<std::string> tempCurrentVect(currentVect), tempCandVect;
 
 	//iterate over string to check if each char is valid
-	for(const char c : tempStr) 
+	for(const char c : tempStr) {
 		//isalpha() checks if char is any letter
 		if(!std::isalpha(c))
 			return false;
-			
+	}
 	convertToLowerCase(tempStr);
 	//check if there are duplicates
 	for(auto i : tempCurrentVect) {
@@ -207,44 +209,56 @@ bool FindPalindrome::add(const string & value)
 	}
 	currentVect.push_back(value); //push back to private member variable 
 
-	std::vector<std::string> tempCandVect; //empty temp vector 
-	clear();
+	palindromeVect.clear();
 	recursiveFindPalindromes(tempCandVect, currentVect);
 	return true;
 }
 
+//adds a vector of strings if there are no illegal characters, 
+//no duplicate words within the vector or duplicates of strings that have
+//already been added to instance.
 bool FindPalindrome::add(const vector<string> & stringVector)
 {
-	std::vector<string> tempVect(stringVector); //copy into a temp vector
+	std::vector<string> tempVect(stringVector),tempCurrent(currentVect), tempCandVect;
 	std::string tempStr; //temp to store sentence in string vector
 
 	//iterates over copy of stringVector
 	for(auto i : tempVect) {
 		convertToLowerCase(i); //convert to lowercase to compare
-		for(auto j : currentVect) {
+		for(auto j : tempCurrent) {
 			convertToLowerCase(j);
 			if(i == j) //if there are duplicates return false
 				return false;
 		}
-		tempStr.append(i); //append each string in vector
+		tempStr.append(i);
 		//checks if there are any illegal characters
 		for(const char c : tempStr) {
 			if(!std::isalpha(c))
 				return false;
 		}
-	}
+	} //end 1st for loop
+
+	int freq[30] = {0}, k = 0;
+	//to check for duplicate words within the vector of strings
+	for(std::size_t i = 0; i < tempVect.size(); i++) {
+		for(std::size_t j = 0; j < tempVect.size(); j++) {
+			if(tempVect[i] == tempVect[j]) {
+				k = i;
+				++freq[k];
+			}
+		}
+		if(freq[i] > 1) //if a string appears more than once
+			return false;
+	} //end for
+
 	//add each string to private member variable
-	for(auto i : stringVector)
+	for(auto i : stringVector) 
 		currentVect.push_back(i);
 
-	std::vector<std::string> tempCandVect; //empty temp vector
+	palindromeVect.clear();
+	recursiveFindPalindromes(tempCandVect, currentVect);	
 
-	if(cutTest1(currentVect)) { //if stringVector passes cutTest1
-		clear();
-		recursiveFindPalindromes(tempCandVect, currentVect);	
-		return true; 
-	}
-	return false;
+	return true;
 }
 //returns vector of vectors containing all sentence palindromes
 vector< vector<string> > FindPalindrome::toVector() const

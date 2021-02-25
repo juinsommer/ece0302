@@ -17,17 +17,27 @@ int factorial(int n)
 TEST_CASE( "Test add(const string &)", "[FindPalindrome]" )
 {
 
-	FindPalindrome b, b2, b3;
+	FindPalindrome b, b2, b3, b4, b5, b6;
 	std::string str = "";
-	for(int i = 1; i <= 3; ++i) {
+	for(std::size_t i = 1; i <= 6; ++i) {
 		str.append("a");
 		REQUIRE(b.add(str));
+		REQUIRE(b.number() == factorial(i));
 	}
-	REQUIRE(b.number() == factorial(3));
-
+	
+	b.clear();
+	str = "";
+	for(std::size_t i = 1; i <= 7; i++) {
+		str.append("a");
+		REQUIRE(b.add(str));
+		REQUIRE(b.number() == factorial(i));
+	}
+	
 	REQUIRE(b2.add("Odd"));
 	REQUIRE(b2.add("Never"));
 	REQUIRE(b2.add("Even")); 
+	REQUIRE(b2.add("or"));
+	REQUIRE(b2.number() == 1);
 
 	REQUIRE(b3.add("abba"));
 	REQUIRE(!b3.add("AbbA"));
@@ -37,29 +47,68 @@ TEST_CASE( "Test add(const string &)", "[FindPalindrome]" )
 
 	REQUIRE(b3.number() == 1);
 
+	REQUIRE(b4.add("never"));
+	REQUIRE(b4.add("even"));
+	REQUIRE(b4.add("or"));
+	REQUIRE(b4.add("odd"));
+	REQUIRE(b4.number() == 1);
+
+	REQUIRE(b5.add("was"));
+	REQUIRE(b5.add("it"));
+	REQUIRE(b5.add("a"));
+	REQUIRE(b5.add("car"));
+	REQUIRE(b5.add("or"));
+	REQUIRE(!b5.add("a"));
+	REQUIRE(b5.add("cat"));
+	REQUIRE(b5.add("i"));
+	REQUIRE(b5.add("saw"));
+	REQUIRE(b5.number() == 0);
+
+	REQUIRE(b6.add("rum"));
+	REQUIRE(b6.add("SIR"));
+	REQUIRE(b6.add("red"));
+	REQUIRE(b6.add("Murder"));
+	REQUIRE(b6.add("is"));
+	REQUIRE(b6.number() == 2);
 }
 
 TEST_CASE( "Test add(const vector<string> &)", "[FindPalindrome]")
 {
-	FindPalindrome b, b2, b3, b4, b5, b6, b7;
-	std::vector<std::string> strVect = {"Was", "it", "a", "car", "or", "a", "cat", "I", "saw" };
+	FindPalindrome b, b2, b3, b4, b5, b6;
+	std::vector<std::string> strVect = {"Was", "it", "a", "car"}, strVector{"or", "a", "cat", "I", "saw" };
 	REQUIRE(b.add(strVect));
+	REQUIRE(!b.add(strVector));
 	REQUIRE(!b.add("was"));
 
+	strVect.clear();
+	b.clear();
+	strVect = strVect = {"Was", "it", "a", "car", "or", "a", "cat", "I", "saw" };
+	REQUIRE(!b.add(strVect));
+
 	std::vector<std::string> strVect2 = {"aaaa", "this", "is", "my", "swamp"};
-	REQUIRE(!b2.add(strVect2));
+	REQUIRE(b2.add(strVect2));
+	REQUIRE(b2.number() == 0);
 
 	std::vector<std::string> strVect3 = {"Never", "Odd", "or", "Even"}, strVect4;
 	REQUIRE(b3.add(strVect3));
 	REQUIRE(b3.number() == 1);
 	strVect4 = {"never"};
 	REQUIRE(!b3.add(strVect4));
+	REQUIRE(!b3.add("oDD"));
 
 	std::vector<std::string> strVect5 = {"Never", "Odd", "or"}, strVect6 = {"Even"}, strVect7 = {"Kayak1!"};
-	REQUIRE(!b4.add(strVect5));
+	REQUIRE(b4.add(strVect5));
 	REQUIRE(b4.number() == 0);
 	REQUIRE(b4.add(strVect6));
 	REQUIRE(b4.number() == 1);
+
+	std::string temp;
+	for(auto i : b4.toVector()) {
+		for(auto j : i)
+			temp.append(j);
+	}
+
+	REQUIRE(temp == "NeverOddorEven");
 	REQUIRE(!b4.add(strVect7));
 
 	std::vector<std::string> strVect8 = {"Never", "Even"}, strVect9 = {"Odd", "or "};
@@ -70,6 +119,25 @@ TEST_CASE( "Test add(const vector<string> &)", "[FindPalindrome]")
 	REQUIRE(b6.add(strVect10));
 	REQUIRE(b6.number() == factorial(4));
 
+	b6.clear();
+	strVect10.clear();
+	strVect10 = {"step", "on", "no", "pets"};
+	REQUIRE(b6.add(strVect10));
+
+	b6.clear();
+	strVect10.clear();
+	strVect10 = {"Murder", "for", "a", "jar", "of", "red", "rum"};
+	REQUIRE(b6.add(strVect10));
+	REQUIRE(b6.number() == 2);
+
+	b6.clear();
+	strVect10.clear();
+	strVect9.clear();
+	strVect10 = {"Murder", "jar", "red", "a" };
+	strVect9 = { "for", "of", "rum"};
+	REQUIRE(b6.add(strVect10));
+	REQUIRE(b6.add(strVect9));
+	REQUIRE(b6.number() == 2);
 }
 
 TEST_CASE( "Test cutTest1()", "[FindPalindrome]")
@@ -90,6 +158,16 @@ TEST_CASE( "Test cutTest1()", "[FindPalindrome]")
 
 	std::vector<std::string> strVect5 = {"Never", "odd", "or"};
 	REQUIRE(!b5.cutTest1(strVect5));
+
+	strVect5.clear();
+	b5.clear();
+	strVect5 = {"abba"};
+	REQUIRE(b5.cutTest1(strVect5));
+
+	strVect.clear();
+	strVect = {"A", "man", "a", "plan", "a" , "canal", "Panama"};
+	b5.clear();
+	REQUIRE(!b5.add(strVect));
 }
 
 TEST_CASE( "Test cutTest2()", "[FindPalindrome]") 
@@ -121,7 +199,14 @@ TEST_CASE( "Test cutTest2()", "[FindPalindrome]")
 
 	str7 = {"Odd", "Even"};
 	str8 = {"Never", "or"};
-	REQUIRE(b4.cutTest2(str8, str7));
+	REQUIRE(!b4.cutTest2(str8, str7));
+
+	b4.clear();
+	str7.clear();
+	str8.clear();
+	str7 = {"Never"};
+	str8 = {"Even","or", "odd"};
+	REQUIRE(b4.cutTest2(str7, str8));
 }
 
 TEST_CASE("Test clear()", "[FindPalindrome]") {
@@ -135,7 +220,7 @@ TEST_CASE("Test clear()", "[FindPalindrome]") {
 	REQUIRE(f.number() == 0);
 	REQUIRE(f.toVector().empty());
 
-	std::vector<std::string> strVect = {"As", "I", "pee", "sir", "I", "see", "Pisa"};
+	std::vector<std::string> strVect = {"step", "on", "no", "pets"};
 	REQUIRE(f2.add(strVect));
 	f2.clear();
 	REQUIRE(f2.number() == 0);
