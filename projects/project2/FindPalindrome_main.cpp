@@ -20,7 +20,9 @@ int main()
 	vector<string> str = {"Murder", "for", "a", "jar", "of", "red", "rum"};
 	f.add(str);
 
-	
+	cout << endl;
+	cout << "\n******* Project 1 Main *********\n\n"; 
+	cout << "add(const vector<string> &)\n";
 	cout << "\nNumber of sentence palindromes are:  " << f.number() << endl;
 	cout << "\nThe sentence palindromes are:" << endl;
 	vector<vector<string>> vectorList = f.toVector();
@@ -32,7 +34,7 @@ int main()
 	}
 	cout << endl;
 	cout << "\n******* Project 1 Main *********\n\n"; 
-
+	cout << "add(const string &)\n";
 	cout << "\nNumber of sentence palindromes are:  " << f2.number() << endl;
 	cout << "\nThe sentence palindromes are:" << endl;
 	vector<vector<string>> vectorList2 = f2.toVector();

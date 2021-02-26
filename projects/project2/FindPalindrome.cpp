@@ -40,16 +40,16 @@ void FindPalindrome::recursiveFindPalindromes(vector<string>
 	else {
 		//interate over the size of currentStringVector to get every combination of strings
 		for(std::size_t i = 0; i < currentStringVector.size(); i++) {
+			
 			vector<string> tempCandidateVect(candidateStringVector);
 			vector<string> tempCurrentVect(currentStringVector);
 
-			if(!cutTest2(tempCandidateVect, tempCurrentVect))
+			if(!cutTest2(tempCandidateVect, tempCurrentVect)) //if cutTest2 is not passed, break from this branch
 				return;
-			//remove one element each iteration in ascending order
-			tempCurrentVect.erase(tempCurrentVect.begin() + i);
-			//push back the ith element of currentString vector to tempCandidate
-			tempCandidateVect.push_back(currentStringVector[i]);
-			//if cutTest2 is not passed, break from this branch
+			
+			tempCurrentVect.erase(tempCurrentVect.begin() + i); //remove one element each iteration in ascending order
+			tempCandidateVect.push_back(currentStringVector[i]); //push back the ith element of currentString vector to tempCandidate
+	
 			recursiveFindPalindromes(tempCandidateVect, tempCurrentVect);
 		} //end for loop
 	} //end else
@@ -122,11 +122,14 @@ bool FindPalindrome::cutTest1(const vector<string> & stringVector)
 	//an even amount of times except for middle character unless they are the same
 	//as middle character
 	else {
-		for(std::size_t i = 0; i < 26; i++) {
-			//if frequency of char is odd and not middle char
-			if(letters[i] % 2 != 0 && i != (tempStr[middle] - 'a'))
-				return false;
+		int tempCount = 0;
+		//iterate through letters array 
+		for(auto i : letters) {
+			if(i % 2 != 0) //check if a char appears an odd amount of times 
+				++tempCount;
 		}
+		if(tempCount > 1) //if more than one char appears an odd amount of times
+			return false;
 	} //end else
 
 	return true;
@@ -209,8 +212,10 @@ bool FindPalindrome::add(const string & value)
 	}
 	currentVect.push_back(value); //push back to private member variable 
 
-	palindromeVect.clear();
-	recursiveFindPalindromes(tempCandVect, currentVect);
+	if(cutTest1(currentVect)) {
+		palindromeVect.clear();
+		recursiveFindPalindromes(tempCandVect, currentVect);
+	}
 	return true;
 }
 
@@ -255,9 +260,10 @@ bool FindPalindrome::add(const vector<string> & stringVector)
 	for(auto i : stringVector) 
 		currentVect.push_back(i);
 
-	palindromeVect.clear();
-	recursiveFindPalindromes(tempCandVect, currentVect);	
-
+	if(cutTest1(currentVect)){
+		palindromeVect.clear();
+		recursiveFindPalindromes(tempCandVect, currentVect);	
+	}
 	return true;
 }
 //returns vector of vectors containing all sentence palindromes
