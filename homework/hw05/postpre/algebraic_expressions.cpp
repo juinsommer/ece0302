@@ -40,9 +40,28 @@ bool isPost(string s) {
 
   return (firstChar == 0);
 }
-
+// converts postfix expression to prefix expression
+// form of preFix expression is <prefix> = <identifier>|<operator><prefix><prefix>
 void convert(string &postfix, string &prefix) {
 
-  // TODO
+  int postLength = postfix.length();  //postLength stores length of postFix expression
+  char ch = postfix.back(); //ch stores last character in postFix expression
+  string tempPost;
+
+  if(postfix.length() == 1) //if postfix expression is a single character
+    prefix += ch;
+
+  else //if last character is an operator
+  {
+    int endFirst = endPost(postfix, postLength); // find end of postfix1
+    string temp = postfix.substr(endFirst + 1, postLength - 1);
   
+    if(isoperator(ch))
+      prefix += ch; //append operator to front of prefix expression
+
+    convert(temp, prefix);  //recursively convert postfix1 into prefix form
+
+    if(!isoperator(ch))
+      prefix += ch;
+  }
 }
