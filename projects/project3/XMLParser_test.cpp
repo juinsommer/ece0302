@@ -1,8 +1,9 @@
 #define CATCH_CONFIG_MAIN
 #define CATCH_CONFIG_COLOUR_NONE
 #include <iostream>
+#include <fstream>
 #include "catch.hpp"
-#include "XMLParser.cpp"
+#include "XMLParser.hpp"
 
 using namespace std;
 
@@ -44,12 +45,35 @@ TEST_CASE( "Test Stack push", "[XMLParser]" )
 
 TEST_CASE( "Test XMLParser tokenizeInputString", "[XMLParser]" )
 {
-	   INFO("Hint: tokenize single element test of XMLParse");
-		// Create an instance of XMLParse
+		//checks content, start, and end tag recognition
 		XMLParser myXMLParser;
-		string testString = "<test>stuff</test>";
+		string testString = "<startTag>content</endTag>";
 		bool success;
 		success = myXMLParser.tokenizeInputString(testString);
 		REQUIRE(success);
+
+		//checks for declaration recognition
+		XMLParser x, x2, x3;
+		string str = "<?xml version=\"1.0\"?>";
+		REQUIRE(x.tokenizeInputString(str));
+		REQUIRE(x.returnTokenizedInput()[0].tokenType == 5);
+		REQUIRE(x.returnTokenizedInput()[0].tokenString == "xml version=\"1.0\"");
+
+		string str2, str3;
+		char c;
+		//checks entire xmlFile.txt
+		ifstream inFile;
+		inFile.open("./xmlFile.txt");
+		while (!inFile.eof()) {
+			inFile.get(c);
+			str2.push_back(c);
+		}
+		inFile.close();
+		REQUIRE(x2.tokenizeInputString(str2));
+		//end xmlFile check
+
+		//checks for invalid token with nested angle brackets
+		str3 = "<a<b>>";
+		REQUIRE(!x3.tokenizeInputString(str3));
 }
 
