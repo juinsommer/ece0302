@@ -5,16 +5,22 @@
 
 #include <string>
 #include <assert.h>
+#include <cctype>
 #include "XMLParser.hpp"
 
-// TODO: Implement the constructor here
 XMLParser::XMLParser()
 {
+	parseStack = new Stack<std::string>;
+	elementNameBag = new Bag<std::string>;
+
 }  // end default constructor
 
 // TODO: Implement the destructor here
-XMLParser::~XMLParser()
-{
+XMLParser::~XMLParser() 
+{ 
+	clear();
+	delete parseStack;
+	delete elementNameBag;
 }  // end destructor
 
 bool XMLParser::tokenizeInputString(const std::string &inputString)
@@ -44,7 +50,7 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 				t.tokenString.pop_back();
 				t.tokenType = EMPTY_TAG;
 			}
-			else if(isalpha(t.tokenString.front()) && isalpha(t.tokenString.back()))
+			else
 				t.tokenType = START_TAG;
 	
 			tokenizedInputVector.push_back(t); //push tokenStruct object to vector
@@ -55,55 +61,125 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 			while(inputString[++k] != '<') { //grab substring until next opening bracket
 				if(inputString[k] == '>') //checks for nested brackets
 					return false;
-				t2.tokenString += inputString[k];
+				if(!isblank(inputString[k]) && inputString[k] != '\n' && !isspace(inputString[k])) 
+					t2.tokenString += inputString[k];
 			}
-			if(t2.tokenString.front() != '\n') { //if 1st char of token str is not a new line
+			if(!t2.tokenString.empty()) {
 				t2.tokenType = CONTENT;
 				tokenizedInputVector.push_back(t2);
 			}
-		}
-	}
-	for(auto i : tokenizedInputVector)
-		std::cout << "token string: " << i.tokenString 
-				  << std::endl << "token type: " << i.tokenType
-				  << std::endl << std::endl;
-
+		}//end if
+	}//end for
 	return true;
-}  // end
-
-// TODO: Implement a helper function to delete attributes from a START_TAG
-// or EMPTY_TAG string (you can change this...)
+}
+//deletes attributes from a start or empty tag
 static std::string deleteAttributes(std::string input)
 {
-	return input;
+	std::string temp;
+	for(const char c: input) {
+		if(std::isspace(c) || c == '\0')
+			break;
+
+		  temp.push_back(c);
+	}
+	return temp;
 }
 
+/*static bool isIllegalChar(const char c) {
+	return ((c == '!') || (c == '#') || (c == '"') || (c == '$') || (c == '%') 
+			|| (c == '\'') || (c == '(') || (c == ')') || (c == '*') || (c == '+')
+			|| (c == ',') || (c == '/') || (c == ';') || (c == '<') || (c == '>')
+			|| (c == '=') || (c == '@') || (c == '^')); 
+}*/
 // TODO: Implement the parseTokenizedInput method here
 bool XMLParser::parseTokenizedInput()
 {
+	if(tokenizedInputVector.empty())
+		return false;
+
+	for(auto i : returnTokenizedInput()) {
+		std::string matchTag, temp;
+		bool isMatch = false;
+
+		switch(i.tokenType) {
+			case START_TAG:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+				temp = i.tokenString;
+				if(temp[0] == '.' || temp[0] == '-' || isdigit(temp[0]) || isspace(temp[0]))
+					return false;
+
+				temp = deleteAttributes(i.tokenString);
+				for(const char c : temp.substr(1, temp.length())) {
+					if(!isalpha(c) && c != '.' && c != '-' && !isdigit(c) || isspace(c))
+						return false;
+				}
+				parseStack->push(temp);
+				break;
+
+			case END_TAG:
+				if(parseStack->isEmpty())
+					return false;
+				temp = i.tokenString;
+				if(temp[0] == '.' || temp[0] == '-' || isdigit(temp[0]) || isspace(temp[0]))
+					return false;
+
+				for(const char c : temp.substr(1, temp.length())) {
+					if(!isalpha(c) && c != '.' && c != '-' && !isdigit(c) || isspace(c))
+						return false;
+				}
+				matchTag = parseStack->peek();
+				isMatch = (temp == matchTag) ? true : false;
+
+				if(!isMatch)
+					return false;
+				
+				parseStack->pop();
+				elementNameBag->add(temp);
+				break;
+
+			case EMPTY_TAG:
+				temp = i.tokenString;
+				if(temp[0] == '.' || temp[0] == '-' || isdigit(temp[0]) || isspace(temp[0]))
+					return false;
 	
-	return false;
+				temp = deleteAttributes(i.tokenString);
+				for(const char c : temp.substr(1, temp.length())) {
+					if(!isalpha(c) && c != '.' && c != '-' && !isdigit(c) || isspace(c))
+						return false;
+				}
+				elementNameBag->add(temp);
+				break;
+
+			default:
+				break;
+		} //end switch
+		
+	} //end for 
+	return true;
 }
 
 // TODO: Implement the clear method here
 void XMLParser::clear()
 {
+	parseStack->clear();
+	elementNameBag->clear();
+	tokenizedInputVector.clear();
 }
 
-vector<TokenStruct> XMLParser::returnTokenizedInput() const
-{
-	return tokenizedInputVector;
-}
+vector<TokenStruct> XMLParser::returnTokenizedInput() const { return tokenizedInputVector; }
 
 // TODO: Implement the containsElementName method
 bool XMLParser::containsElementName(const std::string &inputString) const
 {
-	return false;
+	bool doesContain = false;
+	if(!elementNameBag->isEmpty()) {
+		doesContain = elementNameBag->contains(inputString) ? true : false;
+	}
+	return doesContain;
 }
 
 // TODO: Implement the frequencyElementName method
 int XMLParser::frequencyElementName(const std::string &inputString) const
 {
-	return -1;
+	return elementNameBag->getFrequencyOf(inputString);
 }
 

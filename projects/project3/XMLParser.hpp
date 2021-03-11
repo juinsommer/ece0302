@@ -87,6 +87,7 @@ public:
 	void clear();
 	/** The class destructor. Must free all allocated memory. */
 	~XMLParser();
+
 }; // end XMLParser
 
 #endif
