@@ -39,7 +39,10 @@ bool Stack<ItemType>::push(const ItemType& newItem)
 
 //returns last item in stack
 template<class ItemType>
-ItemType Stack<ItemType>::peek() const throw(logic_error) { return headPtr->getItem(); }  // end peek
+ItemType Stack<ItemType>::peek() 
+{ 
+		return (isEmpty()? throw logic_error("Stack is empty"): headPtr->getItem());
+}  // end peek
 
 //remove item at top of the stack
 template<class ItemType>

@@ -95,7 +95,7 @@ TEST_CASE( "Test Stack handout-1", "[XMLParser]" )
        }
        REQUIRE(charStack.size() == 6);
        charStack.clear();
-       REQUIRE(charStack.isEmpty() == true);      
+       REQUIRE(charStack.isEmpty() == true);    
 }
 
 // You can assume that the beginning and the end of CONTENT will not be filled with whitespace

@@ -50,10 +50,13 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 		if(inputString[i] == '<') {
 			int j = i;
 			while(inputString[++j] != '>') { //grab the substring until closing bracket
-				if(inputString[j] == '<') //returns false if brackets are nested
+				if(inputString[j] == '<') { //returns false if brackets are nested
+					clear();
 					return false;
+				}
 				t.tokenString += inputString[j]; //append char to tokenString
 			}
+
 			//assign token type based on 1st and or last char of substring
 			if(t.tokenString.front() == '/') {
 				t.tokenString.erase(0,1); //erase backslash
@@ -73,25 +76,44 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 				t.tokenType = START_TAG;
 				t.tokenString = deleteAttributes(t.tokenString);
 			}
+			if(t.tokenType != DECLARATION) {
+				//checks if first character is an illegal 1st character
+				if(t.tokenString[0] == '.' || t.tokenString[0] == '-' || isdigit(t.tokenString[0]) || isspace(t.tokenString[0])) {
+					clear();
+					return false;
+				}
+				//if string not a single character
+				if(t.tokenString.size() > 1) {
+					// iterate over string starting after 1st character
+					for(const char c : t.tokenString.substr(1, t.tokenString.length())) {
+						// if is an illegal character
+						if(!isalpha(c) && c != '.' && c != '-' && c != '_' && !isdigit(c) || isspace(c)) {
+							clear();
+							return false;
+						} //end 2nd if
+					} //end for
+				} //end 1st if
+			}
 			tokenizedInputVector.push_back(t); //push tokenStruct object to vector
 		}
 		//if char is closing angle bracket and next char is not end of string
 		if(inputString[i] == '>' && inputString[i + 1] != '\0' && !isspace(inputString[i + 1])) {
 			int k = i;
 			while(inputString[++k] != '<') { //grab substring until next opening bracket
-				if(inputString[k] == '>') //checks for nested brackets
+				if(inputString[k] == '>') { //checks for nested brackets
+					clear();
 					return false;
+				}
 				if(inputString[k] != '\n') //if character is a new line
 					t2.tokenString += inputString[k];
 			}
-
 			if(!t2.tokenString.empty()) { //if token string is not empty
 				t2.tokenType = CONTENT;
 				tokenizedInputVector.push_back(t2);
 			}
 		}//end if
 	}//end for
-
+	
 	return true;
 }
 
@@ -110,40 +132,24 @@ bool XMLParser::parseTokenizedInput()
 		switch(i.tokenType) {
 			case START_TAG:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 				temp = i.tokenString;
-				//checks if first character is an illegal 1st character
-				if(temp[0] == '.' || temp[0] == '-' || isdigit(temp[0]) || isspace(temp[0]))
-					return false;
-				//if string not a single character
-				if(temp.size() > 1) {
-					// iterate over string starting after 1st character
-					for(const char c : temp.substr(1, temp.length())) {
-						// if is an illegal character
-						if(!isalpha(c) && c != '.' && c != '-' && c != '_' && !isdigit(c) || isspace(c))
-							return false;
-					}
-				}
 				parseStack->push(temp); //push string to stack
 				break;
 
 			case END_TAG:
-				if(parseStack->isEmpty())
+				if(parseStack->isEmpty()) {
+					clear();
 					return false;
+				}
 
 				temp = i.tokenString;
-				if(temp[0] == '.' || temp[0] == '-' || isdigit(temp[0]) || isspace(temp[0]))
-					return false;
-
-				if(temp.size() > 1) {
-					for(const char c : temp.substr(1, temp.length())) {
-						if(!isalpha(c) && c != '.' && c != '-' && c != '_' && !isdigit(c) || isspace(c))
-							return false;
-					}
-				}
+				
 				matchTag = parseStack->peek(); //matching tag is assigned to string at top of stack
 				isMatch = (temp == matchTag) ? true : false; 
 
-				if(!isMatch) //if tags don't match
+				if(!isMatch) { //if tags don't match
+					clear();
 					return false;
+				}
 				
 				parseStack->pop();
 				elementNameBag->add(temp); //add element name to list
@@ -151,23 +157,17 @@ bool XMLParser::parseTokenizedInput()
 
 			case EMPTY_TAG:
 				temp = i.tokenString;
-				if(temp[0] == '.' || temp[0] == '-' || isdigit(temp[0]) || isspace(temp[0]))
-					return false;
-	
-				if(temp.size() > 1) {
-					for(const char c : temp.substr(1, temp.length())) {
-						if(!isalpha(c) && c != '.' && c != '-' && c != '_' && !isdigit(c) || isspace(c))
-							return false;
-					}
-				}
 				elementNameBag->add(temp);
 				break;
 
 			default:
 				break;
 		} //end switch
-		
 	} //end for 
+	if(!parseStack->isEmpty()) {
+		clear();
+		return false;
+	}
 	return true;
 }
 
@@ -185,15 +185,22 @@ vector<TokenStruct> XMLParser::returnTokenizedInput() const { return tokenizedIn
 bool XMLParser::containsElementName(const std::string &inputString) const
 {
 	bool doesContain = false;
-	if(!elementNameBag->isEmpty()) {
+	if(!returnTokenizedInput().empty() && !elementNameBag->isEmpty()) {
 		doesContain = elementNameBag->contains(inputString) ? true : false;
 	}
+	else
+		throw logic_error("returnTokenizedInput() is empty or elementNameBag is empty");
+
 	return doesContain;
 }
 
 //checks the frequency of an element name in xml file
 int XMLParser::frequencyElementName(const std::string &inputString) const
 {
-	return elementNameBag->getFrequencyOf(inputString);
+	if(!returnTokenizedInput().empty() && !elementNameBag->isEmpty()) 
+		return elementNameBag->getFrequencyOf(inputString);
+
+	else
+		throw logic_error("returnTokenizedInput() is empty or elementNameBag is empty");
 }
 

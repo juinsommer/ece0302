@@ -7,8 +7,6 @@
 
 using namespace std;
 
-// TODO Implement tests of your Stack class and XMLParser class here
-
 TEST_CASE( "Test Bag add", "[XMLParser]" )
 {
 		// Create a Bag to hold ints
@@ -115,18 +113,18 @@ TEST_CASE( "Test parseTokenizedInput()", "[XMLParser]" ) {
 	REQUIRE(x.parseTokenizedInput());
 
 	//test for illegal characters
-	XMLParser x2, x3, x4, x5, x6, x7, x8;
-	string str1 = "<.startTag>content</startTag>";
-	string str2, str3, str4, str5, str6, str7;
-	REQUIRE(x2.tokenizeInputString(str1));
+	XMLParser x2, x3, x4, x5, x6, x7, x8, x9;
+	string str1 = "<.startTag>content</.startTag>";
+	string str2, str3, str4, str5, str6, str7, str8;
+	REQUIRE(!x2.tokenizeInputString(str1));
 	REQUIRE(!x2.parseTokenizedInput());
 
 	str2 = "<-startTag>content</-startTag>";
-	REQUIRE(x3.tokenizeInputString(str2));
+	REQUIRE(!x3.tokenizeInputString(str2));
 	REQUIRE(!x3.parseTokenizedInput());
 
 	str3 = "<5startTag>content</5startTag>";
-	REQUIRE(x4.tokenizeInputString(str3));
+	REQUIRE(!x4.tokenizeInputString(str3));
 	REQUIRE(!x4.parseTokenizedInput());
 
 	str4 = "<start.Tag>content</start.Tag>";
@@ -138,12 +136,16 @@ TEST_CASE( "Test parseTokenizedInput()", "[XMLParser]" ) {
 	REQUIRE(x6.parseTokenizedInput());
 
 	str6 = "<.startTag>content</.startTag>";
-	REQUIRE(x7.tokenizeInputString(str6));
+	REQUIRE(!x7.tokenizeInputString(str6));
 	REQUIRE(!x7.parseTokenizedInput());
 
 	str7 = "< startTag>content</ startTag>";
-	REQUIRE(x8.tokenizeInputString(str7));
+	REQUIRE(!x8.tokenizeInputString(str7));
 	REQUIRE(!x8.parseTokenizedInput());
+
+	str8 = "content<startTag>";
+	REQUIRE(x9.tokenizeInputString(str8));
+	REQUIRE(!x9.parseTokenizedInput());
 } 
 
 TEST_CASE( "Test containsElementName()", "[XMLParser]") {
@@ -199,8 +201,6 @@ TEST_CASE( "Test clear()", "[XMLParser]") {
 	
 	x.clear();
 	REQUIRE(!x.parseTokenizedInput());
-	REQUIRE(!x.containsElementName("note"));
-	REQUIRE(x.frequencyElementName("note") == 0);
 	REQUIRE(x.returnTokenizedInput().empty());
 }
 
@@ -319,5 +319,5 @@ TEST_CASE( "Test Stack handout-1", "[XMLParser]" )
        }
        REQUIRE(charStack.size() == 6);
        charStack.clear();
-       REQUIRE(charStack.isEmpty() == true);      
+       REQUIRE(charStack.isEmpty() == true); 
 }
