@@ -38,7 +38,7 @@ public:
 	    stays the same.
 		@return  Item of ItemType that was on the top of the stack. 
 		Throws an exception of type logic_error if the stack is empty. */
-	ItemType peek();
+	ItemType peek() const throw (logic_error);
 	/** Deletes all entries on the stack.
 	    @post  Stack contains no items, and the size of the stack is 0. */
 	void clear();

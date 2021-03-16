@@ -72,13 +72,13 @@ TEST_CASE( "Test XMLParser tokenizeInputString", "[XMLParser]" )
 	REQUIRE(success);
 
 	//checks for declaration recognition
-	XMLParser x, x2, x3;
+	XMLParser x, x2, x3, x4, x5, x6;
 	string str = "<?xml version=\"1.0\"?>";
 	REQUIRE(x.tokenizeInputString(str));
 	REQUIRE(x.returnTokenizedInput()[0].tokenType == 5);
 	REQUIRE(x.returnTokenizedInput()[0].tokenString == "xml version=\"1.0\"");
 
-	string str2, str3;
+	string str2, str3, str4, str5, str6;
 	char c;
 	//checks entire xmlFile.txt
 	ifstream inFile;
@@ -91,9 +91,14 @@ TEST_CASE( "Test XMLParser tokenizeInputString", "[XMLParser]" )
 	REQUIRE(x2.tokenizeInputString(str2));
 	//end xmlFile check
 
-	//checks for invalid token with nested angle brackets
-	str3 = "<a<b>>";
+	str3 = "< /tag>";
 	REQUIRE(!x3.tokenizeInputString(str3));
+	str4 = "<tag>content< /tag>";
+	REQUIRE(!x4.tokenizeInputString(str4));
+
+	str5 = "<?declaration?>content<tag>content</tag>";
+	REQUIRE(x5.tokenizeInputString(str5));
+	REQUIRE(!x5.parseTokenizedInput());
 }
 
 TEST_CASE( "Test parseTokenizedInput()", "[XMLParser]" ) {
@@ -113,9 +118,9 @@ TEST_CASE( "Test parseTokenizedInput()", "[XMLParser]" ) {
 	REQUIRE(x.parseTokenizedInput());
 
 	//test for illegal characters
-	XMLParser x2, x3, x4, x5, x6, x7, x8, x9;
+	XMLParser x2, x3, x4, x5, x6, x7, x8, x9, x10;
 	string str1 = "<.startTag>content</.startTag>";
-	string str2, str3, str4, str5, str6, str7, str8;
+	string str2, str3, str4, str5, str6, str7, str8, str9;
 	REQUIRE(!x2.tokenizeInputString(str1));
 	REQUIRE(!x2.parseTokenizedInput());
 
@@ -139,13 +144,18 @@ TEST_CASE( "Test parseTokenizedInput()", "[XMLParser]" ) {
 	REQUIRE(!x7.tokenizeInputString(str6));
 	REQUIRE(!x7.parseTokenizedInput());
 
-	str7 = "< startTag>content</ startTag>";
+	str7 = "< startTag>content< /startTag>";
 	REQUIRE(!x8.tokenizeInputString(str7));
 	REQUIRE(!x8.parseTokenizedInput());
 
-	str8 = "content<startTag>";
+	str8 = "<empty/>\n<tag>content</tag>";
 	REQUIRE(x9.tokenizeInputString(str8));
 	REQUIRE(!x9.parseTokenizedInput());
+
+	str9 = "content";
+	REQUIRE(x10.tokenizeInputString(str9));
+	REQUIRE(!x10.parseTokenizedInput());
+
 } 
 
 TEST_CASE( "Test containsElementName()", "[XMLParser]") {
@@ -222,7 +232,6 @@ TEST_CASE( "Test XMLParser tokenizeInputString Handout-1", "[XMLParser]" )
 								TokenStruct{StringTokenType::END_TAG, std::string("To")},
 								TokenStruct{StringTokenType::END_TAG, std::string("Note")}};
 	std::vector<TokenStruct> output = myXMLParser.returnTokenizedInput();
-
 	REQUIRE(result.size() == output.size());
 	for (int i = 0; i < result.size(); i++) {
 		REQUIRE(result[i].tokenType == output[i].tokenType);

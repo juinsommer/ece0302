@@ -13,9 +13,9 @@ XMLParser::XMLParser()
 	parseStack = new Stack<std::string>;
 	elementNameBag = new Bag<std::string>;
 
-}  // end default constructor
+}  //end default constructor
 
-// TODO: Implement the destructor here
+//class destructor
 XMLParser::~XMLParser() 
 { 
 	clear();
@@ -46,6 +46,7 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 	//iterate over size of input string
 	for(std::size_t i = 0; i < inputString.size(); i++) {
 		TokenStruct t, t2; //declare two tokenStruct objects locally every iteration
+	
 		//if char is opening angle bracket
 		if(inputString[i] == '<') {
 			int j = i;
@@ -55,7 +56,7 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 					return false;
 				}
 				t.tokenString += inputString[j]; //append char to tokenString
-			}
+			} //end while
 
 			//assign token type based on 1st and or last char of substring
 			if(t.tokenString.front() == '/') {
@@ -72,7 +73,7 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 				t.tokenString = deleteAttributes(t.tokenString); 
 				t.tokenType = EMPTY_TAG;
 			}
-			else {
+			else if(isalpha(t.tokenString[0]) || isdigit(t.tokenString[0])) {
 				t.tokenType = START_TAG;
 				t.tokenString = deleteAttributes(t.tokenString);
 			}
@@ -90,30 +91,30 @@ bool XMLParser::tokenizeInputString(const std::string &inputString)
 						if(!isalpha(c) && c != '.' && c != '-' && c != '_' && !isdigit(c) || isspace(c)) {
 							clear();
 							return false;
-						} //end 2nd if
+						} //end if
 					} //end for
-				} //end 1st if
-			}
+				} //end if
+			} //end if
 			tokenizedInputVector.push_back(t); //push tokenStruct object to vector
 		}
 		//if char is closing angle bracket and next char is not end of string
-		if(inputString[i] == '>' && inputString[i + 1] != '\0' && !isspace(inputString[i + 1])) {
+		if(inputString[i] == '>' && inputString[i + 1] != '\0') {
 			int k = i;
-			while(inputString[++k] != '<') { //grab substring until next opening bracket
+			while(inputString[++k] != '<' && inputString[k + 1] != '\0') { //grab substring until next opening bracket
 				if(inputString[k] == '>') { //checks for nested brackets
 					clear();
 					return false;
 				}
-				if(inputString[k] != '\n') //if character is a new line
+				if(isalpha(inputString[k]) || isdigit(inputString[k]) || inputString[k] == ' ')
 					t2.tokenString += inputString[k];
 			}
-			if(!t2.tokenString.empty()) { //if token string is not empty
+			if(t2.tokenString.find_first_not_of(' ') != std::string::npos) { //if token string is not empty
 				t2.tokenType = CONTENT;
 				tokenizedInputVector.push_back(t2);
 			}
 		}//end if
 	}//end for
-	
+
 	return true;
 }
 
@@ -156,9 +157,21 @@ bool XMLParser::parseTokenizedInput()
 				break;
 
 			case EMPTY_TAG:
+				//if empty tag is the first tag
+				if(i.tokenType == returnTokenizedInput()[0].tokenType) {
+					clear();
+					return false;
+				}
 				temp = i.tokenString;
 				elementNameBag->add(temp);
 				break;
+
+			case CONTENT:
+
+				if(parseStack->isEmpty()) {
+					clear();
+					return false;
+				}
 
 			default:
 				break;
