@@ -4,8 +4,34 @@
 
 #include "sorted_linked_list.hpp"
 typedef SortedLinkedList<char> ListType;
+typedef LinkedList<int> List;
 
 template class SortedLinkedList<int>;
+
+TEST_CASE("test linked list", "[Linked List]") {
+  List l, l2;
+  
+  for(int i = 0; i < 10; i++) 
+    REQUIRE(l.insert(i, i));
+
+  for(int i = 0; i < 10; i++)
+    REQUIRE(l.getEntry(i) == i);
+
+  REQUIRE(l2.insert(0,0));
+  REQUIRE(l2.insert(1,1));
+  REQUIRE(l2.insert(2,2));
+  REQUIRE(l2.getLength() == 3);
+  REQUIRE(l2.remove(0));
+  REQUIRE(l2.remove(0));
+  REQUIRE(l2.remove(0));
+
+  REQUIRE(l2.isEmpty());
+  REQUIRE(l2.getLength() == 0);
+
+  LinkedList<char> linked;
+  REQUIRE(linked.insert(0, 'c'));
+  REQUIRE(linked.getLength() == 1);
+}
 
 TEST_CASE("Testing isEmpty", "[sorted linked list]") {
   ListType lst;
@@ -191,5 +217,5 @@ TEST_CASE("Testing exceptions", "[sorted linked list]") {
   CHECK_THROWS_AS(lst.getEntry(5), std::range_error);
 
   CHECK_THROWS_AS(lst.removeAt(-1), std::range_error);
-  CHECK_THROWS_AS(lst.getEntry(-1), std::range_error);
+  CHECK_THROWS_AS(lst.getEntry(-1), std::range_error); 
 }

@@ -47,10 +47,6 @@ public:
   // where it would be inserted.
   long int getPosition(const T& newValue);
 
-private:
-
-  // TODO
-
 };
 
 #include "sorted_linked_list.tpp"
