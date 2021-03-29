@@ -40,18 +40,26 @@ std::size_t SortedList<T, L>::getLength()
 template <typename T, typename L>
 void SortedList<T, L>::insert(const T& item)
 {
-  // TODO
+
+  int position = std::fabs(getPosition(item));
+  plist.insert(position, item);
 }
 
 template <typename T, typename L>
 void SortedList<T, L>::remove(const T& item)
 {
-  // TODO
+  if(isEmpty()) throw std::range_error("DNE");
+
+  int position = getPosition(item);
+
+  if(position > 0)
+    plist.remove(position);
 }
 
 template <typename T, typename L>
 void SortedList<T, L>::removeAt(std::size_t position)
 {
+   if(isEmpty() || position < 0 || position >= getLength()) throw std::range_error("DNE");
   plist.remove(position);
 }
 
@@ -64,12 +72,21 @@ void SortedList<T, L>::clear()
 template <typename T, typename L>
 T SortedList<T, L>::getEntry(std::size_t position)
 {
+  if(isEmpty() || position < 0 || position >= getLength()) throw std::range_error("DNE");
   return plist.getEntry(position);
 }
 
 template <typename T, typename L>
 long int SortedList<T, L>::getPosition(const T& newValue)
 {
-  // TODO
-  return 0;
+  int position = 0; 
+  int length = plist.getLength();
+
+  while((position < length) && (newValue >= plist.getEntry(position)))
+    position++;
+
+  if((position >= length) || (newValue != plist.getEntry(position)))
+    position = -position;
+
+  return position;
 }
