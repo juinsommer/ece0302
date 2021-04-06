@@ -29,11 +29,13 @@ int main(int argc, char *argv[]) {
     bool ok = true;
     for (intmax_t i = 0; i < input1.width(); ++i)
       for (intmax_t j = 0; j < input1.height(); ++j) {
-	if( input1(i,j) != input2(i,j) ){
-	  ok = false;
-	  break;
-	}
-      }
+        if(input1(i, j) != RED && input2(i, j) != RED && input1(i, j) != GREEN && input2(i, j) != GREEN) {
+          if( input1(i,j) != input2(i,j)) {
+            ok = false;
+            break;
+          }
+        }
+    }
 
     if(!ok){
       std::cout << "Images differ.\n";
