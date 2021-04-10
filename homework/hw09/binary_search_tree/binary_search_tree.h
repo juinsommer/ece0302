@@ -50,4 +50,4 @@ private:
 
 #include "binary_search_tree.tpp"
 
-#endif // _BINARY_SEARCH_TREE_H_
+#endif // _BINARY_SEARCH_TREE_H 
