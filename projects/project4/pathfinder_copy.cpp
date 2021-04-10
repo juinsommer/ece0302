@@ -1,18 +1,18 @@
 #include <iostream>
 #include <image.h>
-#include <cstring>
 #include "deque.hpp"
 
 class PathFinder {
   private:
-    Image<Pixel> input;// Image object to store image read from .png file
+    Image<Pixel> input;
     std::string output;// stores output file name read in from program executable
-    Deque<int> *rowFrontier, *colFrontier;// ptrs to deque objects
-    bool **explored = nullptr;// ptr to 2d array of bools
+    Deque<int> *rowFrontier, *colFrontier; 
+    bool **explored = nullptr;
     bool solutionFound = false;
     intmax_t row, col, rowSize, colSize;
     int rowDir[4] = {-1, 1, 0, 0};// array to store row adjacent node directions
     int colDir[4] = {0, 0, 1, -1};// array to store col adjacent node directions
+    int layerStepsLeft = 1, nextLayerSteps = 0;
 
   public:
     PathFinder(){};
@@ -24,23 +24,14 @@ class PathFinder {
 
 bool PathFinder::readImage(int argc, char *argv[]) 
 {
+  if (argc != 3) {
+    std::cout << "Usage: compare"
+              << "<first_input_filename> <second_output_filename>\n"
+              << std::endl;
+    return EXIT_FAILURE;
+  }
+
   bool success = true;
-
-    if (argc != 3) {
-      std::cout << "Usage: compare"
-                << "<first_input_filename> <second_output_filename>\n"
-                << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    const char* ext1 = strrchr(argv[1], '.');
-    const char* ext2 = strrchr(argv[2], '.');
-
-    if(strcmp(ext1, ".png") || strcmp(ext2, ".png")) {
-      std::cout << "Invalid file type. Accepts type '.png'.\n" << std::endl;
-      return EXIT_FAILURE;
-    }
-
   try {
     input = readFromFile(argv[1]);
     output = argv[2];
@@ -137,9 +128,15 @@ int PathFinder::solve()
           rowFrontier->pushBack(rowPath);
           colFrontier->pushBack(colPath);
           explored[rowPath][colPath] = true; // mark corresponding coordinate as true
+          nextLayerSteps++;// indicate more nodes need explored
         }// end inner if
       }// end outer if
     }// end for
+    layerStepsLeft--;
+    if(layerStepsLeft == 0) { // if s
+      layerStepsLeft = nextLayerSteps;
+      nextLayerSteps = 0;
+    }
   }// end while
 
   if(solutionFound) {

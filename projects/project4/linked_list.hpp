@@ -3,6 +3,7 @@
 
 #include "abstract_list.hpp"
 #include "Node.hpp"
+#include <algorithm>
 
 template <typename T>
 class LinkedList: public AbstractList<T>

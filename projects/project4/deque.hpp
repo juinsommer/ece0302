@@ -5,7 +5,7 @@
 #include "linked_list.hpp"
 
 template <typename T>
-class Deque: public AbstractDeque<T>, private LinkedList<T>{
+class Deque: public LinkedList<T> {
 
   public:
   /** Class constructor
