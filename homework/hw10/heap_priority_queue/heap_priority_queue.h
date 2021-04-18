@@ -4,6 +4,7 @@
 
 #include "abstract_priority_queue.h"
 #include "dynamic_array_list.h"
+#include <stdexcept>
 
 template <typename T>
 class HeapPriorityQueue: public AbstractPriorityQueue<T>
@@ -60,14 +61,51 @@ void HeapPriorityQueue<T>::add(const T& item)
             }
         }
     }  
+    for(int i = 0; i < lst.getLength();  i++)
+        std::cout << lst.getEntry(i) << std::endl;
+
+    std::cout << std::endl;
 }
 
 template <typename T>
 void HeapPriorityQueue<T>::remove()
 {
-    if(!isEmpty())
-        lst.remove(0);
+    int root = 0;
+    if(isEmpty()) throw std::range_error("empty heap");
 
+    if(lst.getLength() == 1)
+        lst.remove(0);
+    
+    else {
+        lst.remove(0);
+        T last = lst.getEntry(lst.getLength() - 1);
+        lst.remove(lst.getLength() - 1);
+        lst.insert(0, last);
+
+        int largest = 0, 
+        leftChild = 2 * root + 1, 
+        rightChild = 2 * root + 2;
+
+        while(leftChild < lst.getLength()) {
+            
+            leftChild = 2 * root + 1;
+            rightChild = 2 * root + 2;
+
+            if(leftChild < lst.getLength() && lst.getEntry(leftChild) > lst.getEntry(root))
+                largest = leftChild;
+            
+            if(rightChild < lst.getLength() && lst.getEntry(rightChild) > lst.getEntry(largest))
+                largest = rightChild;
+
+            if(largest != 0) {
+                T largestItem = lst.getEntry(largest);
+                T rootItem = lst.getEntry(root);
+                lst.setEntry(root, largestItem);
+                lst.setEntry(largest, rootItem);
+                root = largest;
+            }
+        }
+    }
 }
 
 template <typename T>
@@ -78,3 +116,4 @@ T HeapPriorityQueue<T>::peek()
 
 
 #endif // _HEAP_PRIORITY_QUEUE_H_
+
