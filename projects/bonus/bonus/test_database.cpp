@@ -126,20 +126,25 @@ TEST_CASE("Test Entry Types", "[entry type]") {
     e1.author = "George R. R. Martin";
     e1.pubYear = 2031;
 
-    testdb.add(isbn1, catalog_id1, e1);
+    REQUIRE(testdb.add(isbn1, catalog_id1, e1));
 
     Entry e2;
 
     std::string isbn2 = "000-0-00-000000-2";
     std::string catalog_id2 = "0000002";
-    e1.title = "A Dream of Spring";
-    e1.author = "George R. R. Martin";
-    e1.pubYear = 2032;
+    e2.title = "A Dream of Spring";
+    e2.author = "George R. R. Martin";
+    e2.pubYear = 2032;
 
-    testdb.add(isbn2, catalog_id2, e2);
+    REQUIRE(testdb.add(isbn2, catalog_id2, e2));
+    REQUIRE(testdb.contains(isbn2));
+    REQUIRE(testdb.contains(catalog_id2));
+    REQUIRE(testdb.getValue(isbn2).author == "George R. R. Martin");
 
-    // TODO
-    
+    REQUIRE(testdb.contains(isbn1));
+    REQUIRE(testdb.contains(catalog_id1));
+    REQUIRE(testdb.getValue(isbn1).author == "George R. R. Martin");
+    REQUIRE(testdb.getValue(isbn1).title == "The Winds of Winter");
 }
 
 TEST_CASE("test list class", "[list]") {
@@ -190,10 +195,47 @@ TEST_CASE("test binary search tree", "[bst]") {
 
 TEST_CASE("test getAllEntries", "[getAllEntries]") {
     Database<std::string> testdb;
+    std::vector<std::string> entry, allEntries1, allEntries2;
     std::string e1 = "entry1";
-    std::string e2 = "entry2";
-    
+    std::string e2 = "entry2", e3 = "entry3", e4 = "entry4", e5 = "entry5";
+    entry.push_back(e1);
+    entry.push_back(e2);
+    entry.push_back(e3);
+    entry.push_back(e4);
+    entry.push_back(e5);
+
     testdb.add("key1a", "key1b", e1);
     testdb.add("key2a", "key2b", e2);
+    testdb.add("key3a", "key3b", e3);
+    testdb.add("key4a", "key4b", e4);
+    testdb.add("key5a", "key5b", e5);
+
+    allEntries1 = testdb.getAllEntries(1);
+    allEntries2 = testdb.getAllEntries(2);
+
+    for(int i = 0; i < allEntries1.size(); i++)
+       REQUIRE(entry[i] == allEntries1[i]);
+
+    for(int i = 0; i < allEntries2.size(); i++)
+       REQUIRE(entry[i] == allEntries2[i]);
+}
+
+TEST_CASE("test clear", "[clear]") {
+
+    Database<std::string> testdb;
+    std::string e1 = "entry1", 
+                e2 = "entry2", 
+                e3 = "entry3", 
+                e4 = "entry4", 
+                e5 = "entry5";
+
+    REQUIRE(testdb.add("key1a", "key1b", e1));
+    REQUIRE(testdb.add("key2a", "key2b", e2));
+    REQUIRE(testdb.add("key3a", "key3b", e3));
+    REQUIRE(testdb.add("key4a", "key4b", e4));
+    REQUIRE(testdb.add("key5a", "key5b", e5));
+
+    testdb.clear();
+    REQUIRE(testdb.isEmpty());
 }
 

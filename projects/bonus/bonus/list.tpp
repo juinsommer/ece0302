@@ -49,7 +49,6 @@ std::size_t List<T>::getLength()
 template <typename T>
 bool List<T>::insert(std::size_t position, const T& item)
 {
-  //std::clog << "Insert at " << position << " with size " << size << std::endl;
   
   if(position -1 > size) throw std::range_error("position out of range in insert");
 
@@ -64,9 +63,9 @@ bool List<T>::insert(std::size_t position, const T& item)
 
   for(long i = size; i > static_cast<long>(position - 1); --i){
     data[i+1] = data[i];
-    //std::clog << "Shifting " << i << " > " << position << std::endl;
+   
   }
-  //std::clog << std::endl;
+
   data[position - 1] = item;
   ++size;
 
@@ -76,13 +75,24 @@ bool List<T>::insert(std::size_t position, const T& item)
 template <typename T>
 bool List<T>::remove(std::size_t position)
 {
-  if(isEmpty()) throw std::range_error("empty list in remove");
-  if(position > size) throw std::range_error("position out of range in remove");
-  
-  for(long i = position - 1; i < size; ++i){
-    data[i] = data[i+1];
-  }
+
+ if(size == 0 || position < 1 || position -1 > size)
+    return false;
+
   --size;
+
+  T* oldData = data; //copy list ptr
+  data = new T[capacity];
+
+//copy all elements of array except item to be removed 
+  for(std::size_t i = 0; i < position - 1; i++) 
+    data[i] = oldData[i];
+
+  for(std::size_t i = position - 1; i < getLength(); i++) 
+    data[i] = oldData[i + 1];
+  
+  delete [] oldData;
+
   return true;
 }
 

@@ -5,7 +5,7 @@ Database<T>::Database(): numItems(0) {}
 
 template <typename T>
 bool Database<T>::isEmpty() {
-    return (data.isEmpty());
+    return (data.isEmpty() && search1.isEmpty() && search2.isEmpty());
 }
 
 template <typename T>
@@ -67,8 +67,14 @@ bool Database<T>::remove(std::string key) {
 
 template <typename T>
 void Database<T>::clear() {
-    search1.destroy();
-    search2.destroy();
+    for(int i = 0; i < keyChain.size(); i++) {
+           if(i == 0 || i % 2 == 0) 
+               search1.remove(keyChain[i]);
+       }
+    for(int i = 0; i < keyChain.size(); i++) {
+           if(i % 2 != 0)
+               search2.remove(keyChain[i]);
+       }
     data.clear();
     keyChain.clear();
 }
@@ -105,11 +111,24 @@ bool Database<T>::contains(std::string key) {
 template <typename T>
 std::vector<T> Database<T>::getAllEntries(int keyIndex) {
     std::vector<T> allEntries;
+    int item;
+   
     if(keyIndex == 1) {
-        for(int i = 1; i <= numItems; i++)
-            allEntries[i] = data.getEntry(i);
-
-        search1.treeSort(allEntries, numItems);
+       for(int i = 0; i < keyChain.size(); i++) {
+           if(i == 0 || i % 2 == 0) {
+               search1.retrieve(keyChain[i], item);
+               allEntries.push_back(data.getEntry(item));
+           }
+       }
     }
+    if(keyIndex == 2) {
+        for(int i = 0; i < keyChain.size(); i++) {
+           if(i % 2 != 0) {
+               search2.retrieve(keyChain[i], item);
+               allEntries.push_back(data.getEntry(item));
+           }
+       }
+    }
+    
     return allEntries; 
 }
