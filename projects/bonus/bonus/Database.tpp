@@ -18,10 +18,12 @@ bool Database<T>::add(std::string key1, std::string key2, const T& item) {
 
     if(!contains(key1) && !contains(key2)) {
         data.insert(++numItems, item);
+
         search1.insert(key1, numItems);
         search2.insert(key2, numItems);
-        firstKey = key1;
-        secondKey = key2;
+
+        keyChain.push_back(key1); //push keys to keyChain vector 
+        keyChain.push_back(key2); //to assist other method functionality
         return true;
     }
     return false;
@@ -29,17 +31,34 @@ bool Database<T>::add(std::string key1, std::string key2, const T& item) {
 
 template <typename T>
 bool Database<T>::remove(std::string key) {
+    
+    if(isEmpty()) throw std::range_error("DataBase is empty. Cannot remove item.\n");
 
     if(contains(key)) {
-        int item;
-        if(search1.retrieve(key, item)) {
-            data.remove(item);
+        int item, index = 0;
+        for(auto i : keyChain) {
+            if(i == key)
+                break;
+            index++;
+        }
+        if(index == keyChain.size()) throw std::range_error("Item to remove not found.\n");
+    
+        if(index == 0 || index % 2 == 0) { //if index is even, its pair must right after 
+            search1.retrieve(key, item);
             search1.remove(key);
+            search2.remove(keyChain[index + 1]);
+            keyChain.erase(keyChain.begin() + index);
+            keyChain.erase(keyChain.begin() + index + 1);
         }
-        if(search2.retrieve(key, item)) {
-            data.remove(item);
+        else { //if index is odd, its pair must be before it
+            search2.retrieve(key, item);
+            search1.remove(keyChain[index - 1]);
             search2.remove(key);
+            keyChain.erase(keyChain.begin() + index);
+            keyChain.erase(keyChain.begin() + index - 1);
         }
+        --numItems;
+        data.remove(item);
         return true;
     }
     
@@ -51,6 +70,7 @@ void Database<T>::clear() {
     search1.destroy();
     search2.destroy();
     data.clear();
+    keyChain.clear();
 }
 
 template <typename T>
@@ -86,8 +106,6 @@ template <typename T>
 std::vector<T> Database<T>::getAllEntries(int keyIndex) {
     std::vector<T> allEntries;
     if(keyIndex == 1) {
-        int item;
-        search1.retrieve(firstKey, item);
         for(int i = 1; i <= numItems; i++)
             allEntries[i] = data.getEntry(i);
 

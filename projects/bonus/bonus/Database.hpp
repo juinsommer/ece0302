@@ -22,7 +22,7 @@ public:
   // insert entry 
   bool add(std::string key1, std::string key2, const T& item);
 
-  // remove entry 
+  // removes both keys and the data
   bool remove(std::string key);
 
   // remove all entries
@@ -41,9 +41,9 @@ public:
 
 private:
   int numItems;
+  std::vector<std::string> keyChain;
   List<T> data;
   BinarySearchTree<std::string, int> search1, search2;
-  std::string firstKey, secondKey;
 };
 
 #include "Database.tpp"

@@ -7,10 +7,10 @@
 #include <iostream>
 
 template <typename T>
-class List: public AbstractList<T>
+class List
 {
 public:
-  
+
   // default constructor
   List();
   
@@ -21,27 +21,29 @@ public:
   ~List();
   
   // copy assignment
-  List& operator=(const List& x);
+  List& operator=(List x);
+
+  void swap(List& x, List& y);
   
   // determine if a list is empty
-  bool isEmpty() const;
+  bool isEmpty();
 
-  // return current length of the list
-  std::size_t getLength() const;
+  // return current lenght of the list
+  std::size_t getLength();
 
-  // insert item at position in the list using 1-based indexing
+  // insert item at position in the list using 0-based indexing
   bool insert(std::size_t position, const T& item);
 
-  // remove item at position in the list using 1-based indexing
+  // remove item at position in the list using 0-based indexing
   bool remove(std::size_t position);
 
   // remove all items from the list
   void clear();
 
-  // get a copy of the item at position using 1-based indexing
-  T getEntry(std::size_t position) const;
+  // get a copy of the item at position using 0-based indexing
+  T getEntry(std::size_t position);
 
-  // set the value of the item at position using 1-based indexing
+  // set the value of the item at position using 0-based indexing
   void setEntry(std::size_t position, const T& newValue);
 
 private:

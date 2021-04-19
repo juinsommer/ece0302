@@ -175,22 +175,15 @@ TEST_CASE("test binary search tree", "[bst]") {
     std::string e1 = "entry";
 
     testdb.insert("key1", 1);
-    testdb.insert("key2", 2);
-
     testdb.remove("key1");
-    testdb.remove("key2");
 
     int item;
     REQUIRE(!testdb.retrieve("key1", item));
-    REQUIRE(!testdb.retrieve("key2", item));
 
     testdb.insert("key3", 3); 
-    testdb.insert("key4", 4);
-    
     testdb.remove("key3");
-    testdb.remove("key3");
+
     REQUIRE(!testdb.retrieve("key3", item));
-    REQUIRE(!testdb.retrieve("key4", item));
 
     REQUIRE(testdb.isEmpty());
 }
